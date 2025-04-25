@@ -5,9 +5,11 @@ import morgan from "morgan";
 import connectToDB from './config/connectToDB.js'
 import authRouter from './routes/authRouter.js'
 import { JWT_SECRET } from './config/env.js'
+import errorHandler from "./middleware/errorHandler.js";
 
-if(! JWT_SECRET){
-    console.log('FATAL NO JWT SECRET KEY PROVIDED');
+
+if(!JWT_SECRET){
+    console.log('FATAL: NO JWT SECRET KEY PROVIDED');
     console.log('Please provide the JWT_SECRET KEY in the .env.( development / production).local file');
    process.exit(1)
 }
@@ -16,6 +18,7 @@ process.on('uncaughtException', (ex) =>{
     console.log('EXCEPTION:', ex.message, ex)
     process.exit(1)
 });
+
 
 //middleware
 const app = express()
@@ -33,7 +36,7 @@ app.use('/api/auth', authRouter)
 
 
 // error handlers
-
+app.use(errorHandler)
 
 // config
 connectToDB()
