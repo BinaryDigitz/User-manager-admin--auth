@@ -31,7 +31,7 @@ const userSchema = mongoose.Schema({
 }, { timestamps: true, minimize: false})
 
 userSchema.methods.generateToken = function(){
-    return jwt.sign({id: this._id}, JWT_SECRET, { expiresIn: '3d'})
+    return jwt.sign({id: this._id, role: this.role}, JWT_SECRET, { expiresIn: '3d'})
 }
 
 const UserModel = mongoose.model('User', userSchema)

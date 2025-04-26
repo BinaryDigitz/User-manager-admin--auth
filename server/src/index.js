@@ -6,6 +6,7 @@ import connectToDB from './config/connectToDB.js'
 import authRouter from './routes/authRouter.js'
 import { JWT_SECRET } from './config/env.js'
 import errorHandler from "./middleware/errorHandler.js";
+import userRouter from "./routes/userRouter.js";
 
 
 if(!JWT_SECRET){
@@ -33,6 +34,7 @@ app.use('/images', express.static('images'))
 // routes
 app.get('/', (req, res ) => res.status(200).json({ success: true, message: 'Hello world!'}))
 app.use('/api/auth', authRouter)
+app.use('/api/users', userRouter)
 
 
 // error handlers

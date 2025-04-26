@@ -7,8 +7,6 @@ import { NODE_ENV } from "../config/env.js";
 export const createUser = asyncHandler(async (req, res) => {
   const { name, email, password, role } = req.body;
 
-  console.log(role);
-
   const isUserExisting = await UserModel.findOne({ email });
   if (isUserExisting)
     return res.json({
@@ -18,15 +16,15 @@ export const createUser = asyncHandler(async (req, res) => {
     });
 
   const hashedPassword = await bcrypt.hash(password, 10);
-  let user = await UserModel.create({
+  let newUser = await UserModel.create({
     name,
     email,
     password: hashedPassword,
     role,
   });
-  await user.save();
+  await newUser.save();
 
-  const token = user.generateToken();
+  const token = newUser.generateToken();
   res.cookie("token", token, {
     httpOnly: true,
     seccure: NODE_ENV === "production",
@@ -34,15 +32,13 @@ export const createUser = asyncHandler(async (req, res) => {
     maxAge: 3 * 24 * 60 * 60 * 1000,
   });
 
-  const { password: pass, ...rest } = user._doc;
-  return res
-    .status(201)
-    .json({
-      success: true,
-      message: `${role ? role : "User"} Created successfully`,
-      token,
-      user: rest,
-    });
+  const { password: pass, ...rest } = newUser._doc;
+  return res.status(201).json({
+    success: true,
+    message: `${role ? role : "User"} Created successfully`,
+    token,
+    user: rest,
+  });
 });
 
 // LOGIN USER: /api/auth/sign-in
@@ -50,23 +46,19 @@ export const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   const user = await UserModel.findOne({ email });
   if (!user)
-    return res
-      .status(404)
-      .json({
-        success: false,
-        message: "Invalid Email or Password",
-        statusCode: 400,
-      });
+    return res.status(404).json({
+      success: false,
+      message: "Invalid Email or Password",
+      statusCode: 400,
+    });
 
   const isValidPassword = await bcrypt.compare(password, user.password);
   if (!isValidPassword)
-    return res
-      .status(404)
-      .json({
-        success: false,
-        message: "Invalid Email or Password",
-        statusCode: 400,
-      });
+    return res.status(404).json({
+      success: false,
+      message: "Invalid Email or Password",
+      statusCode: 400,
+    });
 
   const token = user.generateToken();
   res.cookie("token", token, {
@@ -77,12 +69,10 @@ export const loginUser = asyncHandler(async (req, res) => {
   });
 
   const { password: pass, ...rest } = user._doc;
-  return res
-    .status(201)
-    .json({
-      success: true,
-      message: `${user.name} Login successfully`,
-      token,
-      user: rest,
-    });
+  return res.status(201).json({
+    success: true,
+    message: `${user.name} Login successfully`,
+    token,
+    user: rest,
+  });
 });
