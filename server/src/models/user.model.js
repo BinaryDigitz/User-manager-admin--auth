@@ -22,7 +22,13 @@ const userSchema = mongoose.Schema({
         maxLenght: 250,
         required: true
     },
-}, { timestamp: true, minimize: false})
+    role:{
+        type:String,
+        enum: ['user', 'manager', 'admin'],
+        required:true,
+    }
+
+}, { timestamps: true, minimize: false})
 
 userSchema.methods.generateToken = function(){
     return jwt.sign({id: this._id}, JWT_SECRET, { expiresIn: '3d'})

@@ -9,7 +9,7 @@ function connectToDB() {
       console.log("Connected to database");
       app.listen(PORT, () => {
         console.log(
-          `App is running in ${NODE_ENV} mode at http:localhost:${PORT}`
+          `App is running in ${NODE_ENV} mode at http://localhost:${PORT}`
         );
       });
     })
